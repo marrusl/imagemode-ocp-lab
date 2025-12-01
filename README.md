@@ -147,7 +147,6 @@ We’re going to add `tcpdump` to our nodes. Adding RHEL packages is simple sinc
 ```
 FROM configs AS final
 RUN dnf install -y tcpdump && \
-    dnf clean all && \
     bootc container lint
     # NOTE: on 4.18 use `ostree container commit` in place of
     # `bootc container lint`
@@ -155,7 +154,7 @@ RUN dnf install -y tcpdump && \
 
 NOTE: the build job is a multi-stage build where `configs` is the base RHCOS image plus machineconfig content and `final` is the image that will be rolled out to the nodes in the pool.
 
-Using the [refresh-sample-image.sh](http://refresh-sample-image.sh) script to write a MachineOSConfig template. NOTE: this one is hardcoded to `master`.
+Using the `refresh-sample-image.sh` script to write a MachineOSConfig template. NOTE: it's hardcoded to `master`.
 
 Optionally, we can use `yq` to save us some YAML indentation pain when working with Containerfiles. Although not included in RHEL, yq can be found in [EPEL](https://access.redhat.com/solutions/3358) and on various platforms such as macOS (via Homebrew), Windows, and Fedora. It’s overkill for short and simple Containerfile content but a lifesaver when things get a little more complicated.
 
@@ -173,4 +172,37 @@ yq -i e '.spec.renderedImagePushSecret.name = strenv(pushsecret)' ./my-machineos
 yq -i e '.spec.renderedImagePushSpec = strenv(pushspec)' ./my-machineosconfig.yaml
 ```
 
-Now you should have a complete and hopefully valid MachineOSConfig. Let’s apply it\! The build will take a couple of minutes and the system will be rebooted with tcpdump now installed.
+Now you should have a complete and hopefully valid MachineOSConfig. Here's what mine looks like:
+```
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineOSConfig
+metadata:
+  name: master
+spec:
+  # Here is where you refer to the MachineConfigPool that you want your built
+  # image to be deployed to.
+  machineConfigPool:
+    name: master
+  containerFile:
+    - content: |-
+        FROM configs AS final
+        RUN dnf install -y tcpdump && \
+            dnf clean all && \
+            bootc container lint
+            # NOTE: on 4.18 use `ostree container commit` in place of
+            # `bootc container lint`
+  # Here is where you can select an image builder type. For now, we only
+  # support the "Job" type that we maintain ourselves. Future
+  # integrations can / will include other build system integrations.
+  imageBuilder:
+    imageBuilderType: Job
+  # Here is where you specify the name of the push secret you use to push
+  # your newly-built image to.
+  renderedImagePushSecret:
+    name: builder-dockercfg-9d42q
+  # Here is where you specify the image registry to push your newly-built
+  # images to.
+  renderedImagePushSpec: image-registry.openshift-image-registry.svc:5000/openshift-machine-config-operator/os-images:latest
+  ```
+Apply yours and take a well deserved break! The build will take a couple of minutes and the system will be rebooted with tcpdump now installed. Que du bonheur!
