@@ -1,6 +1,6 @@
 # Image mode on OpenShift Lab
 
-# Requirements
+### Requirements
 
 Physical or virtual machine with two disks  
 Disk A → 120gb  
@@ -12,7 +12,7 @@ vCPUs: 8
 Internet connected cluster
 
 
-# SNO installation via Assisted Installer
+## SNO installation via Assisted Installer
 
 Login to console  
 In the Red Hat OpenShift box click create cluster  
@@ -44,13 +44,13 @@ Generate a discovery ISO
 4. Click Generate Discovery ISO  
 5. Download ISO or copy URL for virtual media via BMC  
 
-Virt-manager / KVM setup instructions
+Virt / KVM machine setup instructions
 
 1. Create new machine   
 2. Select discovery ISO  
 3. Unselect Auto OS detection and choose “Red Hat Enterprise Linux 9.6”  for OCP 4.19-4.21 or RHEL 9.4 for 4.18.  
 4. Finish setup and attach secondary storage to the instance  
-5. Boot  
+5. Boot
 6. Wait for host to show up in console and show Ready, then click Next  
 7. Storage: double check that the installation disk is the one you intended and click Next  
 8. Review networking and click Next  
