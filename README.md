@@ -1,5 +1,7 @@
 # Image mode on OpenShift Lab
 
+#### Have questions or noticed a bug? Please [file an issue](https://github.com/marrusl/imagemode-ocp-lab/issues). Thank you!
+
 ### Requirements
 
 Physical or virtual machine with two disks  
