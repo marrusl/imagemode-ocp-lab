@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Write the sample MachineOSConfig to a YAML file:
+# Write the sample MachineOSConfig YAML file:
 cat << EOF > my-machineosconfig.yaml
 ---
 apiVersion: machineconfiguration.openshift.io/v1
